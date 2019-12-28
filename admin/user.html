@@ -68,6 +68,57 @@
             </form>
         </div>
     </div>
+
+    <!-- 导入封装的https.js文件, 内部通过 beforeSend 给xhr 对象添加请求头 -->
+    <script src="./js/https.js"></script>
+    <script>
+        $(function () {
+            // 页面一加载,就获取用户的信息
+            $.ajax({
+                type: 'get',
+                url: "http://localhost:8080/api/v1/admin/user/detail",
+                dataType: 'json',
+                success: function (backData) {
+                    console.log(backData);
+                    //渲染页面
+                    $('#inputEmail1').val(backData.data.username)
+                    $('#inputEmail2').val(backData.data.nickname)
+                    $('#inputEmail3').val(backData.data.email)
+                    $('#inputEmail4').val(backData.data.password)
+                }
+            });
+
+            //  上传图片
+            $('#exampleInputFile').on('change', function () {
+                // 获取用户选择的图片
+                let file = this.file[0];
+                let url = URL.createObjectURL(file);
+                $('.user_pic').attr('src', url);
+            });
+
+            // 编辑用户信息
+            $('#form').on('submit', function (e) {
+                // 阻止表单默认提交事件
+                e.preventDefault();
+                $.ajax({
+                    type: 'post',
+                    url: "http://localhost:8080/api/v1/admin/user/edit",
+                    dataType: 'json',
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function (backData) {
+                        if (backData.code === 200) {
+                            alert("修改成功");
+                            //parent.window.location.reload();
+                            window.location.href = './index.html';
+
+                        }
+                    }
+                })
+            })
+        })
+    </script>
 </body>
 
 </html>
